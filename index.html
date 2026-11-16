@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice extraction demo — sample invoices to Excel, CSV and Sheets</title>
+<meta name="description" content="Demo: five fictional sample invoices go in as PDFs and come out as structured rows in Excel, CSV and Google Sheets-ready tables, with a review tab that checks totals and dates. Not client work. Built by Pasko Djonovic.">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+</head>
+<body>
+<div class="demo-banner">DEMO on sample documents — every company, address and amount is fictional. This is not client work.</div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🧾</div>
+      <div>
+        <h1>Invoice extraction demo</h1>
+        <p>Sample invoices in &rarr; structured rows out to CSV, Excel or Google Sheets</p>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <span class="pill">pdfplumber + regex</span>
+      <span class="pill">0 API keys</span>
+      <span class="pill">5 sample invoices</span>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>What this page shows</h2>
+    <ol class="pipe">
+      <li>Sample invoices in<span>Five one-page PDFs in USD, EUR, GBP, JPY and AUD. Layouts and date formats differ on purpose.</span></li>
+      <li>Extract fields<span>A Python script reads the text layer with pdfplumber and regex. No LLM, no OCR, no API spend.</span></li>
+      <li>Structured rows out<span>One Invoices row per document, a Line items sheet, and downloadable CSV / Excel files.</span></li>
+      <li>Review checks<span>Net + VAT = total, date parsed to ISO, line items sum to net, no duplicate invoice numbers. All five passed.</span></li>
+    </ol>
+    <div class="downloads">
+      <a class="btn" href="output/extracted_invoices.xlsx" download>Download Excel workbook</a>
+      <a class="btn ghost" href="output/invoices.csv" download>Invoices CSV</a>
+      <a class="btn ghost" href="output/line_items.csv" download>Line items CSV</a>
+      <a class="btn ghost" href="output/review.csv" download>Review CSV</a>
+    </div>
+    <p class="note">The workbook has three sheets: <b>Invoices</b>, <b>Line items</b> and <b>Review</b>. The CSVs are the same data, ready to open in Excel or import into Google Sheets. This run uses only the sample documents below.</p>
+  </section>
+
+  <section class="card">
+    <h2>Sample invoices (input)</h2>
+    <div class="samples">
+      <figure class="sample">
+        <a href="input/01-northwind-supplies-usd.pdf"><img src="images/pdf-renders/01-northwind-supplies-usd.png" alt="Northwind Supplies sample invoice in USD"></a>
+        <figcaption>
+          <b>Northwind Supplies LLC</b>
+          <div class="meta">INV-1042 · 12 Oct 2026 · USD</div>
+          <a href="input/01-northwind-supplies-usd.pdf" download>Download PDF</a>
+        </figcaption>
+      </figure>
+      <figure class="sample">
+        <a href="input/02-bergholm-advisory-eur.pdf"><img src="images/pdf-renders/02-bergholm-advisory-eur.png" alt="Bergholm Advisory sample invoice in EUR"></a>
+        <figcaption>
+          <b>Bergholm Advisory AB</b>
+          <div class="meta">BH-2026-0887 · 2026-10-03 · EUR</div>
+          <a href="input/02-bergholm-advisory-eur.pdf" download>Download PDF</a>
+        </figcaption>
+      </figure>
+      <figure class="sample">
+        <a href="input/03-maple-wick-studio-gbp.pdf"><img src="images/pdf-renders/03-maple-wick-studio-gbp.png" alt="Maple and Wick Studio sample invoice in GBP"></a>
+        <figcaption>
+          <b>Maple &amp; Wick Studio Ltd</b>
+          <div class="meta">MW-4419 · 15 November 2026 · GBP</div>
+          <a href="input/03-maple-wick-studio-gbp.pdf" download>Download PDF</a>
+        </figcaption>
+      </figure>
+      <figure class="sample">
+        <a href="input/04-kitebay-office-goods-jpy.pdf"><img src="images/pdf-renders/04-kitebay-office-goods-jpy.png" alt="Kitebay Office Goods sample invoice in JPY"></a>
+        <figcaption>
+          <b>Kitebay Office Goods K.K.</b>
+          <div class="meta">KB-77105 · 2026/09/28 · JPY</div>
+          <a href="input/04-kitebay-office-goods-jpy.pdf" download>Download PDF</a>
+        </figcaption>
+      </figure>
+      <figure class="sample">
+        <a href="input/05-southern-reef-supplies-aud.pdf"><img src="images/pdf-renders/05-southern-reef-supplies-aud.png" alt="Southern Reef Supplies sample invoice in AUD"></a>
+        <figcaption>
+          <b>Southern Reef Supplies Pty Ltd</b>
+          <div class="meta">SRS-26019 · 03/11/2026 · AUD</div>
+          <a href="input/05-southern-reef-supplies-aud.pdf" download>Download PDF</a>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Extracted tables (output)</h2>
+    <div class="tabs">
+      <button class="tab on" data-tab="invoices" type="button">Invoices</button>
+      <button class="tab" data-tab="lines" type="button">Line items</button>
+      <button class="tab" data-tab="review" type="button">Review</button>
+    </div>
+
+    <div id="pane-invoices" class="pane on">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Invoice number</th>
+              <th>Date (on invoice)</th>
+              <th>Date parsed</th>
+              <th>Currency</th>
+              <th class="num">Net</th>
+              <th class="num">VAT</th>
+              <th class="num">Total</th>
+              <th>Source PDF</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Northwind Supplies LLC</td>
+              <td>INV-1042</td>
+              <td>12 Oct 2026</td>
+              <td>2026-10-12</td>
+              <td>USD</td>
+              <td class="num">242.00</td>
+              <td class="num">24.20</td>
+              <td class="num">266.20</td>
+              <td><a href="input/01-northwind-supplies-usd.pdf">01-northwind-supplies-usd.pdf</a></td>
+            </tr>
+            <tr>
+              <td>Bergholm Advisory AB</td>
+              <td>BH-2026-0887</td>
+              <td>2026-10-03</td>
+              <td>2026-10-03</td>
+              <td>EUR</td>
+              <td class="num">3,250.00</td>
+              <td class="num">812.50</td>
+              <td class="num">4,062.50</td>
+              <td><a href="input/02-bergholm-advisory-eur.pdf">02-bergholm-advisory-eur.pdf</a></td>
+            </tr>
+            <tr>
+              <td>Maple &amp; Wick Studio Ltd</td>
+              <td>MW-4419</td>
+              <td>15 November 2026</td>
+              <td>2026-11-15</td>
+              <td>GBP</td>
+              <td class="num">765.00</td>
+              <td class="num">153.00</td>
+              <td class="num">918.00</td>
+              <td><a href="input/03-maple-wick-studio-gbp.pdf">03-maple-wick-studio-gbp.pdf</a></td>
+            </tr>
+            <tr>
+              <td>Kitebay Office Goods K.K.</td>
+              <td>KB-77105</td>
+              <td>2026/09/28</td>
+              <td>2026-09-28</td>
+              <td>JPY</td>
+              <td class="num">52,000</td>
+              <td class="num">5,200</td>
+              <td class="num">57,200</td>
+              <td><a href="input/04-kitebay-office-goods-jpy.pdf">04-kitebay-office-goods-jpy.pdf</a></td>
+            </tr>
+            <tr>
+              <td>Southern Reef Supplies Pty Ltd</td>
+              <td>SRS-26019</td>
+              <td>03/11/2026</td>
+              <td>2026-11-03</td>
+              <td>AUD</td>
+              <td class="num">465.50</td>
+              <td class="num">46.55</td>
+              <td class="num">512.05</td>
+              <td><a href="input/05-southern-reef-supplies-aud.pdf">05-southern-reef-supplies-aud.pdf</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Dates such as <code>03/11/2026</code> are parsed day-first (3 November 2026). Yen amounts have no cents.</p>
+    </div>
+
+    <div id="pane-lines" class="pane">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice number</th>
+              <th>Vendor</th>
+              <th>Description</th>
+              <th class="num">Qty</th>
+              <th class="num">Unit price</th>
+              <th class="num">Amount</th>
+              <th>Currency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td>A4 copy paper, 10 reams</td><td class="num">12</td><td class="num">5.00</td><td class="num">60.00</td><td>USD</td></tr>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td>Ballpoint pens, box of 20</td><td class="num">8</td><td class="num">6.25</td><td class="num">50.00</td><td>USD</td></tr>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td>LED desk lamp, 12W</td><td class="num">3</td><td class="num">24.00</td><td class="num">72.00</td><td>USD</td></tr>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td>Filing folders, pack of 50</td><td class="num">6</td><td class="num">7.50</td><td class="num">45.00</td><td>USD</td></tr>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td>Packing and delivery</td><td class="num">1</td><td class="num">15.00</td><td class="num">15.00</td><td>USD</td></tr>
+            <tr><td>BH-2026-0887</td><td>Bergholm Advisory AB</td><td>Strategy workshop (2 days)</td><td class="num">2</td><td class="num">900.00</td><td class="num">1,800.00</td><td>EUR</td></tr>
+            <tr><td>BH-2026-0887</td><td>Bergholm Advisory AB</td><td>Process mapping, 8 hours</td><td class="num">8</td><td class="num">125.00</td><td class="num">1,000.00</td><td>EUR</td></tr>
+            <tr><td>BH-2026-0887</td><td>Bergholm Advisory AB</td><td>Written recommendations</td><td class="num">1</td><td class="num">450.00</td><td class="num">450.00</td><td>EUR</td></tr>
+            <tr><td>MW-4419</td><td>Maple &amp; Wick Studio Ltd</td><td>Brand identity refresh</td><td class="num">1</td><td class="num">640.00</td><td class="num">640.00</td><td>GBP</td></tr>
+            <tr><td>MW-4419</td><td>Maple &amp; Wick Studio Ltd</td><td>Business card design (double-sided)</td><td class="num">1</td><td class="num">85.00</td><td class="num">85.00</td><td>GBP</td></tr>
+            <tr><td>MW-4419</td><td>Maple &amp; Wick Studio Ltd</td><td>Print-ready export pack</td><td class="num">1</td><td class="num">40.00</td><td class="num">40.00</td><td>GBP</td></tr>
+            <tr><td>KB-77105</td><td>Kitebay Office Goods K.K.</td><td>A3 plotter paper, 5 rolls</td><td class="num">5</td><td class="num">2,800</td><td class="num">14,000</td><td>JPY</td></tr>
+            <tr><td>KB-77105</td><td>Kitebay Office Goods K.K.</td><td>Toner cartridge, black</td><td class="num">4</td><td class="num">6,500</td><td class="num">26,000</td><td>JPY</td></tr>
+            <tr><td>KB-77105</td><td>Kitebay Office Goods K.K.</td><td>Desk organizers, set of 3</td><td class="num">6</td><td class="num">1,800</td><td class="num">10,800</td><td>JPY</td></tr>
+            <tr><td>KB-77105</td><td>Kitebay Office Goods K.K.</td><td>Shipping</td><td class="num">1</td><td class="num">1,200</td><td class="num">1,200</td><td>JPY</td></tr>
+            <tr><td>SRS-26019</td><td>Southern Reef Supplies Pty Ltd</td><td>Outdoor cable, 50m drum</td><td class="num">3</td><td class="num">89.50</td><td class="num">268.50</td><td>AUD</td></tr>
+            <tr><td>SRS-26019</td><td>Southern Reef Supplies Pty Ltd</td><td>Weatherproof junction boxes</td><td class="num">10</td><td class="num">12.40</td><td class="num">124.00</td><td>AUD</td></tr>
+            <tr><td>SRS-26019</td><td>Southern Reef Supplies Pty Ltd</td><td>Cable ties, pack of 200</td><td class="num">8</td><td class="num">4.75</td><td class="num">38.00</td><td>AUD</td></tr>
+            <tr><td>SRS-26019</td><td>Southern Reef Supplies Pty Ltd</td><td>Same-day courier</td><td class="num">1</td><td class="num">35.00</td><td class="num">35.00</td><td>AUD</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pane-review" class="pane">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice number</th>
+              <th>Vendor</th>
+              <th>Date OK</th>
+              <th>Net + VAT = Total</th>
+              <th>Line items = Net</th>
+              <th>Duplicate number</th>
+              <th>Overall</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>INV-1042</td><td>Northwind Supplies LLC</td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td>No</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>BH-2026-0887</td><td>Bergholm Advisory AB</td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td>No</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>MW-4419</td><td>Maple &amp; Wick Studio Ltd</td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td>No</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>KB-77105</td><td>Kitebay Office Goods K.K.</td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td>No</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>SRS-26019</td><td>Southern Reef Supplies Pty Ltd</td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td><span class="pass">PASS</span></td><td>No</td><td><span class="pass">PASS</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><b>5 of 5 invoices passed every check.</b> Date OK = printed date parsed to ISO (YYYY-MM-DD). Net + VAT = Total uses Decimal addition. Line items = Net checks that extracted lines sum to the invoice net. Duplicate number would fail if the same invoice number appeared twice in this batch.</p>
+    </div>
+  </section>
+
+  <section class="card about">
+    <p>This is a static demo of a Python pipeline (<code>extract_invoices.py</code>) that turns text-layer invoice PDFs into a checked workbook. A production job can add OCR for scans, extra layouts, and a write-out to Google Sheets — after seeing the real files.</p>
+    <p class="by">Built by <b>Pasko Djonovic</b> — full-stack React/Next.js &amp; AI automation developer · <a href="https://www.upwork.com/freelancers/paskodjonovic" target="_blank" rel="noopener">Upwork</a> · <a href="https://github.com/djonovic/invoice-extraction-demo" id="repolink" target="_blank" rel="noopener">source</a></p>
+  </section>
+</div>
+<script>
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click", function(){
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("on"); });
+    document.querySelectorAll(".pane").forEach(function(p){ p.classList.remove("on"); });
+    tab.classList.add("on");
+    document.getElementById("pane-" + tab.dataset.tab).classList.add("on");
+  });
+});
+</script>
+</body>
+</html>

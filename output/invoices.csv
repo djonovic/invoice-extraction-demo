@@ -1,0 +1,6 @@
+Vendor,Invoice number,Date (on invoice),Date parsed,Currency,Net,VAT,Total,Source PDF
+Northwind Supplies LLC,INV-1042,12 Oct 2026,2026-10-12,USD,242,24.2,266.2,01-northwind-supplies-usd.pdf
+Bergholm Advisory AB,BH-2026-0887,2026-10-03,2026-10-03,EUR,3250,812.5,4062.5,02-bergholm-advisory-eur.pdf
+Maple & Wick Studio Ltd,MW-4419,15 November 2026,2026-11-15,GBP,765,153,918,03-maple-wick-studio-gbp.pdf
+Kitebay Office Goods K.K.,KB-77105,2026/09/28,2026-09-28,JPY,52000,5200,57200,04-kitebay-office-goods-jpy.pdf
+Southern Reef Supplies Pty Ltd,SRS-26019,03/11/2026,2026-11-03,AUD,465.5,46.55,512.05,05-southern-reef-supplies-aud.pdf

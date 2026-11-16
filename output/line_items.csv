@@ -1,0 +1,20 @@
+Invoice number,Vendor,Description,Qty,Unit price,Amount,Currency
+INV-1042,Northwind Supplies LLC,"A4 copy paper, 10 reams",12,5,60,USD
+INV-1042,Northwind Supplies LLC,"Ballpoint pens, box of 20",8,6.25,50,USD
+INV-1042,Northwind Supplies LLC,"LED desk lamp, 12W",3,24,72,USD
+INV-1042,Northwind Supplies LLC,"Filing folders, pack of 50",6,7.5,45,USD
+INV-1042,Northwind Supplies LLC,Packing and delivery,1,15,15,USD
+BH-2026-0887,Bergholm Advisory AB,Strategy workshop (2 days),2,900,1800,EUR
+BH-2026-0887,Bergholm Advisory AB,"Process mapping, 8 hours",8,125,1000,EUR
+BH-2026-0887,Bergholm Advisory AB,Written recommendations,1,450,450,EUR
+MW-4419,Maple & Wick Studio Ltd,Brand identity refresh,1,640,640,GBP
+MW-4419,Maple & Wick Studio Ltd,Business card design (double-sided),1,85,85,GBP
+MW-4419,Maple & Wick Studio Ltd,Print-ready export pack,1,40,40,GBP
+KB-77105,Kitebay Office Goods K.K.,"A3 plotter paper, 5 rolls",5,2800,14000,JPY
+KB-77105,Kitebay Office Goods K.K.,"Toner cartridge, black",4,6500,26000,JPY
+KB-77105,Kitebay Office Goods K.K.,"Desk organizers, set of 3",6,1800,10800,JPY
+KB-77105,Kitebay Office Goods K.K.,Shipping,1,1200,1200,JPY
+SRS-26019,Southern Reef Supplies Pty Ltd,"Outdoor cable, 50m drum",3,89.5,268.5,AUD
+SRS-26019,Southern Reef Supplies Pty Ltd,Weatherproof junction boxes,10,12.4,124,AUD
+SRS-26019,Southern Reef Supplies Pty Ltd,"Cable ties, pack of 200",8,4.75,38,AUD
+SRS-26019,Southern Reef Supplies Pty Ltd,Same-day courier,1,35,35,AUD

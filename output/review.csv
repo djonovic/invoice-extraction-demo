@@ -1,0 +1,14 @@
+Invoice number,Vendor,Date (on invoice),Date parsed,Date OK,Currency,Net,VAT,Total,Net + VAT,Net + VAT = Total,Line items sum,Line items = Net,Duplicate number,Overall
+INV-1042,Northwind Supplies LLC,12 Oct 2026,2026-10-12,PASS,USD,242,24.2,266.2,266.2,PASS,242,PASS,No,PASS
+BH-2026-0887,Bergholm Advisory AB,2026-10-03,2026-10-03,PASS,EUR,3250,812.5,4062.5,4062.5,PASS,3250,PASS,No,PASS
+MW-4419,Maple & Wick Studio Ltd,15 November 2026,2026-11-15,PASS,GBP,765,153,918,918,PASS,765,PASS,No,PASS
+KB-77105,Kitebay Office Goods K.K.,2026/09/28,2026-09-28,PASS,JPY,52000,5200,57200,57200,PASS,52000,PASS,No,PASS
+SRS-26019,Southern Reef Supplies Pty Ltd,03/11/2026,2026-11-03,PASS,AUD,465.5,46.55,512.05,512.05,PASS,465.5,PASS,No,PASS
+Summary,5 of 5 invoices passed every check,,,,,,,,,,,,,ALL PASSED
+,,,,,,,,,,,,,,
+Checks,,,,,,,,,,,,,,
+Date OK — the date printed on the invoice was parsed to ISO (YYYY-MM-DD). Day-first is used for numeric dates (03/11/2026 = 3 November 2026).,,,,,,,,,,,,,,
+"Net + VAT = Total — Decimal addition, exact match. JPY values have no cents.",,,,,,,,,,,,,,
+Line items = Net — the sum of extracted line-item amounts equals the invoice net.,,,,,,,,,,,,,,
+Duplicate number — FAIL if the same invoice number appears more than once in this batch.,,,,,,,,,,,,,,
+All companies and amounts in the source PDFs are fictional sample data.,,,,,,,,,,,,,,
